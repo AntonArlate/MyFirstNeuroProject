@@ -16,23 +16,26 @@ def input_data_upd (input_data):
     neural_matrix[0] = input_data
 
 # создаём список нейронов с их значениями
-def neural_init(input_count):
-    '''Создаёт список значений всех нейронов. требуется количество входных данных'''
+def neural_init(input_count, out_count):
+    '''Создаёт список значений всех нейронов. требуется количество входных и кол-во выходных данных'''
     global neural_matrix_init
     neural_matrix_init.insert(0, input_count)
+    neural_matrix_init.append(out_count)
     global neural_matrix
 
     n=len(neural_matrix_init)
 
     neural_matrix = [[0] * neural_matrix_init[i] for i in range(n)]
 
-    neural_matrix_init.pop(0)
+    weight_init()
+
+    # neural_matrix_init.pop(0)
 
 # первичная инициализация весов (потом сделать хранение в файле)
-def weight_init(input_count): # сколько входящих значений
-    '''Создаёт список значений всех весов. требуется количество входных данных'''
+def weight_init(): 
+    '''Создаёт список значений всех весов.'''
     global neural_matrix_init
-    neural_matrix_init.insert(0, input_count)
+    # neural_matrix_init.insert(0, input_count)
     global weight_matrix
 
     for l in range (0,len(neural_matrix_init)-1):
@@ -45,7 +48,7 @@ def weight_init(input_count): # сколько входящих значений
         weight_matrix.append(current_lay)
         # print (weight_matrix)
 
-    neural_matrix_init.pop(0)
+    # neural_matrix_init.pop(0)
  # создаём многомерный массив связей [номер обрабатываемого слоя[номер нейрона на обрабатываемом слое[номер нейрона на следующем слое]]]                
                                                                # [l1[n1l1[n1l2, n2l2], n2l1[n1l2, n2l2], l2[[n1l1[n1l2, n2l2], n2l1[n1l2, n2l2]]]
                 # print (prev_lay, " <-> ", current_lay)
