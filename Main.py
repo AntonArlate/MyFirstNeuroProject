@@ -1,7 +1,17 @@
+from copy import deepcopy
 from functools import reduce
 from operator import add
+from time import sleep
 import neural_network
 import modul
+
+
+from global_data import out_val
+from global_data import in_stores
+from global_data import out_stores
+
+
+import learning
 
 # алгоритм наполнения складов
 def mine(in_stores, mine_value):
@@ -15,7 +25,7 @@ def store_filling(stores, fill_value, indication="+"):
             if indication == "-":
                 stores[i] = stores[i] - fill_value[i]
             else: 
-                stores[i] = stores[i] + fill_value[i]      
+                stores[i] = stores[i] + fill_value[i]    
     else:
         for item in stores:
             if item in fill_value:
@@ -35,20 +45,20 @@ def app_flow_k (out_value=None, result_neuron=None):
 
     res_in = []
     res_in = list(reduce(lambda x, y : x + y, list(out_value.values())))
-    print(list(map(lambda x, y : x*y , result_neuron, res_in)))
+    # print(list(map(lambda x, y : x*y , result_neuron, res_in)))
     res_in = list(map(lambda x, y : x*y , result_neuron, res_in)).copy()
     for i in range(len(res_in)-1):
         result_neuron[i] = res_in[i]
 
 
-def flow_value_generator(): # нужен для создания тестового списка максимального потребления ресурсов
+def flow_value_generator(): # нужен для создания тестового списка максимального потребления ресурсов # изменено на вход
     global flow_gen
     flow_gen = mine_value.copy()
-    flow_gen = modul.item_to_neur(flow_gen)
-    for i in range(len(flow_gen)):
-        flow_gen[i] = flow_gen[i] * flow_value
-    flow_gen = modul.neuro_to_item(flow_gen, mine_value)
-    print(flow_gen)
+    # flow_gen = modul.item_to_neur(flow_gen)
+    # for i in range(len(flow_gen)):
+    #     flow_gen[i] = flow_gen[i] * flow_value
+    # flow_gen = modul.neuro_to_item(flow_gen, mine_value)
+    # print(flow_gen)
 
 
     
@@ -91,18 +101,20 @@ def in_flow ():
 flow_gen = []
 flow_value = 0.9999 # временный коофициент максимального "оттока" из входящих складов
 # создаём склады в виде словаря (название ресурса : значение)
-in_stores = dict(copper=[0], iron=[0], coal=[0], water=[0])  # список объектов
+in_stores.update({'copper':[0], 'iron':[0], 'coal':[0], 'water':[0]})  # список объектов
 mine_value = dict(in_stores)
-mine_value.update(copper=[1], iron=[3], coal=[4], water=[0.001])  # список "прихода"
+mine_value.update(copper=[3], iron=[2], coal=[1], water=[1])  # список "прихода"
 # список выхода (может отличаться от прихода). 
-out_stores = {}
+
 # создаём списки потоков в которых будут перечислены коофициенты. В дальнейшем можно будет реализовать вычисление из суммы всех запросов
 copper_val = [0.25, 0.55, 0.20]
 iron_val = [0.6, 0.4]
 coal_val=[1]
 water_val=[1]
 
-out_val = dict(copper=copper_val, iron=iron_val, coal=coal_val, water=water_val)
+out_val.update({'copper':copper_val, 'iron':iron_val, 'coal':coal_val, 'water':water_val})
+# print(out_val)
+
 
 # пока генерируем список складов на выход, потом возможно будет список продукции
 for item in out_val:
@@ -116,21 +128,39 @@ for item in out_val:
 out_neuro_count = sum([len(out_val[ox]) for ox in out_val])
 neural_network.neural_init(len(in_stores), out_neuro_count) # индексы выходных нейронов будут соответствовать порядку в славаре out_val 
 
-for i in range(10):
-    store_filling(in_stores, mine_value)
 
-neural_network.input_data_upd(modul.item_to_neur(in_stores),0)
+learning.err_matrix = deepcopy(neural_network.neural_matrix) # передаём копию матрицы нейронов в калькулятор ошибки
 
-# print(neural_network.neural_matrix)
-for i in range(len(neural_network.neural_matrix)-1):
-    # print(i)
-    neural_network.forWards(i)
+# for i in range(1):
+#     store_filling(in_stores, mine_value)
 
-# print(neural_network.neural_matrix)
+# neural_network.input_data_upd(modul.in_data_to_neur(modul.item_to_neur(in_stores)),0)
 
-app_flow_k(out_val)
-# print(neural_network.neural_matrix)
+# for i in range(len(neural_network.neural_matrix)-1):
+#     neural_network.forWards(i)
+
+# app_flow_k(out_val)
 
 flow_value_generator()
+# in_flow()
 
-in_flow()
+count = 1
+for i in range(20000):
+    count += 1
+    store_filling(in_stores, mine_value)
+    neural_network.input_data_upd(modul.in_data_to_neur(modul.item_to_neur(in_stores)),0)
+
+    for i in range(len(neural_network.neural_matrix)-1):
+        neural_network.forWards(i)
+    
+    app_flow_k(out_val)
+    in_flow()
+
+    learning.learn_program() # запуск обучения на текущем состоянии
+
+    if count == 20:
+        count = 0
+        print('in -> ', in_stores)
+        print('out -> ', out_stores)
+        print()
+        # sleep(0.05)

@@ -15,5 +15,13 @@ def item_to_neur(item_dict, neur_array=[]):
     neur_array = list(reduce(lambda x, y : x + y, list(item_dict.values())))
     return neur_array
 
+def in_data_to_neur (data_array):
+    maximum = max(data_array)
+    neur_array = data_array.copy()
+    for i in range(len(neur_array)):
+        neur_array[i] = neur_array[i] / maximum
+    return neur_array
+
+
 if __name__ == '__main__':
     item_to_neur({'copper': [10], 'iron': [30], 'coal': [40], 'water': [0]})    

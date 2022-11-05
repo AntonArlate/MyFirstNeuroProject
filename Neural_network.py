@@ -10,7 +10,7 @@ neural_matrix_init = [3, 3] # сколько нейронов на каждом 
 neural_matrix = [] # двумерный массив с данными всех нейронов [слой][значение нейрона n]
 weight_matrix = [] # здесь будут все связи
 activationF = lambda x : 1 / (1 + exp(-1 * x))
-derivativeF = 0
+# derivativeF = lambda 
 
 
 def in_activation (inner):
@@ -40,7 +40,7 @@ def neural_init(input_count, out_count):
 
     n=len(neural_matrix_init)
 
-    neural_matrix = [[0] * neural_matrix_init[i] for i in range(n)]
+    neural_matrix.extend ( [[0] * neural_matrix_init[i] for i in range(n)])
 
     weight_init()
 

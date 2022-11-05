@@ -1,8 +1,7 @@
 import modul
-import main
 import neural_network
 
-
+from global_data import out_val
 
 
 
@@ -18,14 +17,14 @@ def max_filter (inner, flag):
     if flag == "in":
         minimum = maximum
         for i in range(len(f_list)):
-            if f_list[i] < minimum*10:
+            if f_list[i] < minimum*100:
                 if f_list[i] > maximum:
                     maximum = f_list[i]
             else: f_list[i] = -1
     else:
         maximum = minimum
         for i in range(len(f_list)):
-            if f_list[i] > maximum/10:
+            if f_list[i] > maximum/100:
                 if f_list[i] < minimum:
                     minimum = f_list[i]
             else: f_list[i] = -2
@@ -39,6 +38,7 @@ def max_filter (inner, flag):
 
 
 def out_err_calc (in_store:dict, out_store:dict):
+
     fi_list = max_filter(in_store, "in")
     fi_list = list(map(lambda x: x-0.5, fi_list))
     fi_list = modul.neuro_to_item(fi_list, in_store)
@@ -47,7 +47,6 @@ def out_err_calc (in_store:dict, out_store:dict):
     fo_list = list(map(lambda x: 0.5-x, fo_list))
     fo_list = modul.neuro_to_item(fo_list, out_store)
     # print("err out ", fo_list)
-    out_val = main.out_val
 
     for item in fo_list:
         for i in range(len(fo_list[item])):
