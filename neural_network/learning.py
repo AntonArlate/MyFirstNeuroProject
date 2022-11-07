@@ -1,13 +1,13 @@
 from copy import deepcopy
-import neural_network
-import error_calc
-import modul
+import neural_network.network as network
+import neural_network.error_calc as error_calc
+import program_1.modul as modul
 
-from global_data import in_stores
-from global_data import out_stores
+from program_1.global_data import in_stores
+from program_1.global_data import out_stores
 
-weight_matrix = neural_network.weight_matrix # импортируем матрицу весов
-neural_matrix = neural_network.neural_matrix # импортируем матрицу нейронов
+weight_matrix = network.weight_matrix # импортируем матрицу весов
+neural_matrix = network.neural_matrix # импортируем матрицу нейронов
 err_matrix = [] # проверить копируются значения или ссылки. Нужны значения
 
 learn_k = 0.01 # коофициент обучения
@@ -33,11 +33,11 @@ def learn_program ():
 
 def err_fill_neuromatrix ():
     out_err = error_calc.out_err_calc (in_stores, out_stores) # получаем ошибки выхода
-    neural_network.input_data_upd(modul.item_to_neur(out_err), len(neural_network.neural_matrix)-1, err_matrix) # передаём ошибки выхода в матрицу ошибок
+    network.input_data_upd(modul.item_to_neur(out_err), len(network.neural_matrix)-1, err_matrix) # передаём ошибки выхода в матрицу ошибок
 
     # заполняем матрицу ошибок    
     # print(err_matrix)
-    for i in range(len(neural_network.neural_matrix)-1,1,-1): 
-            neural_network.backWards(i, err_matrix)  
+    for i in range(len(network.neural_matrix)-1,1,-1): 
+            network.backWards(i, err_matrix)  
 
 

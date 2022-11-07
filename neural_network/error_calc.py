@@ -1,7 +1,7 @@
-import modul
-import neural_network
+import program_1.modul as modul
+import neural_network.network as network
 
-from global_data import out_val
+from program_1.global_data import out_val
 
 
 
@@ -61,19 +61,19 @@ def out_err_calc (in_store:dict, out_store:dict):
 if __name__ == '__main__':
     # I = {'copper': [1], 'iron': [2], 'coal': [5], 'water': [4]}
     # O = {'copper': [0.453, 0.211, 0.29], 'iron': [0.776, 0.308], 'coal': [1.060], 'water': [1]}
-    I = main.in_stores
-    O = main.out_stores
+    # I = main.in_stores
+    # O = main.out_stores
     
-    out_err = (out_err_calc(I,O))
+    out_err = (out_err_calc({},{}))
     print (out_err)
 
-    neural_network.input_data_upd(modul.item_to_neur(out_err), len(neural_network.neural_matrix)-1)
-    print (neural_network.neural_matrix)
-    for i in range(len(neural_network.neural_matrix)-1,0,-1):
+    network.input_data_upd(modul.item_to_neur(out_err), len(network.neural_matrix)-1)
+    print (network.neural_matrix)
+    for i in range(len(network.neural_matrix)-1,0,-1):
         print(i)
-        neural_network.backWards(i)    
+        network.backWards(i)    
         # получаем в матрице нейронов ошибки для каждого нейрона
 
-    print (neural_network.neural_matrix)
+    print (network.neural_matrix)
 
     

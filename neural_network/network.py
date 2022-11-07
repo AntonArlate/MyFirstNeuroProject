@@ -3,13 +3,14 @@
 # матрица нейронов
 from math import exp
 from random import random
-import modul
+import program_1.modul as modul
 
 
-neural_matrix_init = [3, 3] # сколько нейронов на каждом слое
+neural_matrix_init = [3, 4] # сколько нейронов на каждом слое
 neural_matrix = [] # двумерный массив с данными всех нейронов [слой][значение нейрона n]
 weight_matrix = [] # здесь будут все связи
 activationF = lambda x : 1 / (1 + exp(-1 * x))
+
 # derivativeF = lambda 
 
 
@@ -31,33 +32,31 @@ def input_data_upd (input_data, layer, n_matr=[]):
     n_matr[layer] = input_data
 
 # создаём список нейронов с их значениями
-def neural_init(input_count, out_count):
+def neural_init(neural_config):
     '''Создаёт список значений всех нейронов. требуется количество входных и кол-во выходных данных'''
     global neural_matrix_init
-    neural_matrix_init.insert(0, input_count)
-    neural_matrix_init.append(out_count)
     global neural_matrix
 
-    n=len(neural_matrix_init)
+    n=len(neural_config)
 
-    neural_matrix.extend ( [[0] * neural_matrix_init[i] for i in range(n)])
+    neural_matrix.extend ( [[0] * neural_config[i] for i in range(n)])
 
-    weight_init()
+    weight_init(neural_config)
 
     # neural_matrix_init.pop(0)
 
 # первичная инициализация весов (потом сделать хранение в файле)
-def weight_init(): 
+def weight_init(neural_config): 
     '''Создаёт список значений всех весов.'''
     global neural_matrix_init
     # neural_matrix_init.insert(0, input_count)
     global weight_matrix
 
-    for l in range (0,len(neural_matrix_init)-1):
+    for l in range (0,len(neural_config)-1):
         current_lay = []
-        for current_lay_n in range (neural_matrix_init [l]):
+        for current_lay_n in range (neural_config [l]):
             next_lay = []
-            for next_lay_n in range (neural_matrix_init [l+1]):
+            for next_lay_n in range (neural_config [l+1]):
                 next_lay.append(random ()) # random () /\ next_lay_n
             current_lay.append(next_lay)
         weight_matrix.append(current_lay)
