@@ -13,7 +13,7 @@ err_matrix = [] # проверить копируются значения ил�
 learn_k = 0.01 # коофициент обучения
 
 derivativeF = lambda y : y * (1 - y)
-weight_upd = lambda w, k, nN, inN, nN_val : w + k * nN * derivativeF(nN_val) * inN
+weight_upd = lambda w, k, nN, inN, nN_val : (w + k * nN * derivativeF(nN_val) * inN)
 # w = старое значение веса
 # k = коофициент обучения
 # nN = neuronNext = ошибка следующего за весом нейрона (выход)
@@ -28,6 +28,8 @@ def learn_program ():
     for a in range(len(weight_matrix)):
         for b in range(len(weight_matrix[a])): 
             for c in range(len(weight_matrix[a][b])): 
+                if -0.01 > weight_matrix[a][b][c] < 0: weight_matrix[a][b][c] -= 0.001 # сдвиг от затухания
+                if 0 > weight_matrix[a][b][c] < 0.01: weight_matrix[a][b][c] += 0.001
                 weight_matrix[a][b][c] = weight_upd(weight_matrix[a][b][c], learn_k, err_matrix[a+1][c], neural_matrix[a][b], neural_matrix[a+1][c])
 
 

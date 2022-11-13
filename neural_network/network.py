@@ -10,6 +10,7 @@ neural_matrix_init = [3, 4] # сколько нейронов на каждом 
 neural_matrix = [] # двумерный массив с данными всех нейронов [слой][значение нейрона n]
 weight_matrix = [] # здесь будут все связи
 activationF = lambda x : 1 / (1 + exp(-1 * x))
+bias_map = [True, True, True, False]
 
 # derivativeF = lambda 
 
@@ -29,7 +30,8 @@ def input_data_upd (input_data, layer, n_matr=[]):
     '''n_matr оставить пустым для передачи в neural_matrix'''
     if n_matr == []:
         n_matr = neural_matrix
-    n_matr[layer] = input_data
+    # n_matr[layer] = input_data
+    n_matr[layer] = input_data + [1] * bias_map[layer]
 
 # создаём список нейронов с их значениями
 def neural_init(neural_config):
@@ -37,9 +39,11 @@ def neural_init(neural_config):
     global neural_matrix_init
     global neural_matrix
 
+    neural_config = list(map(lambda x, y : x+y, neural_config, bias_map))
+
     n=len(neural_config)
 
-    neural_matrix.extend ( [[0] * neural_config[i] for i in range(n)])
+    neural_matrix.extend ( [[1] * neural_config[i] for i in range(n)])
 
     weight_init(neural_config)
 
@@ -56,7 +60,8 @@ def weight_init(neural_config):
         current_lay = []
         for current_lay_n in range (neural_config [l]):
             next_lay = []
-            for next_lay_n in range (neural_config [l+1]):
+            # for next_lay_n in range (neural_config [l+1]):
+            for next_lay_n in range (neural_config [l+1] - bias_map[l+1]):
                 next_lay.append(random ()) # random () /\ next_lay_n
             current_lay.append(next_lay)
         weight_matrix.append(current_lay)
@@ -73,24 +78,28 @@ def forWards (cur_lay):
     global weight_matrix
 
     neuron_in = neural_matrix[cur_lay]
+    # print(neuron_in)
     neuron_out = neural_matrix[cur_lay+1]
     cur_lay_weight = weight_matrix [cur_lay]
 
-    in_neu_len = len(cur_lay_weight) #???
-    out_neu_len = len(cur_lay_weight[0])
+    in_neu_len = len(cur_lay_weight) - bias_map[cur_lay+1]
+    # out_neu_len = len(cur_lay_weight[0])
+    out_neu_len = len(cur_lay_weight[0]) - bias_map[cur_lay+1]
+
 
     for i in range(out_neu_len):
         neuron_out[i] = 0
         for j in range(in_neu_len):
             weight = cur_lay_weight[j][i]
             neuron_out[i] = neuron_out[i] + (neuron_in[j]*weight)
+            if bias_map[cur_lay]: neuron_out[i] = neuron_out[i] + (1 * cur_lay_weight[in_neu_len-1][i])
         neuron_out[i] = activationF(neuron_out[i]) # функция активации
 
 def backWards (cur_lay, n_matr=[]): 
     '''обрвтное распространение. Вводим номер обрабатываемого слоя. Будет использован предыдущий
     n_matr оставить пустым для передачи в neural_matrix'''
     if n_matr == []:
-        n_matr = n_matr
+        n_matr = neural_matrix
 
     global weight_matrix
 
@@ -98,7 +107,8 @@ def backWards (cur_lay, n_matr=[]):
     neuron_out = n_matr[cur_lay-1]
     cur_lay_weight = weight_matrix [cur_lay-1]
 
-    in_neu_len = len(neuron_in)
+    # in_neu_len = len(neuron_in)
+    in_neu_len = len(neuron_in) - bias_map[cur_lay-1]
     out_neu_len = len(neuron_out)
 
     for i in range(out_neu_len):

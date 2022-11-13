@@ -97,8 +97,7 @@ def in_flow():
 
 
 flow_gen = []
-flow_value = 0.9999  # временный коофициент максимального "оттока" из входящих складов
-# создаём склады в виде словаря (название ресурса : значение)
+flow_value = 0.9999  # временный коофициент максимального "оттока" из входящих складов создаём склады в виде словаря (название ресурса : значение)
 in_stores.update({'copper': [0], 'iron': [0], 'coal': [0], 'water': [0]})  # список объектов
 mine_value = dict(in_stores)
 mine_value.update(copper=[3], iron=[2], coal=[1], water=[1])  # список "прихода"
@@ -145,7 +144,7 @@ flow_value_generator()
 # in_flow()
 
 count = 1
-for i in range(20000):
+for i in range(200000):
     count += 1
     store_filling(in_stores, mine_value)
     network.input_data_upd(modul.in_data_to_neur(modul.item_to_neur(in_stores)), 0)
@@ -162,5 +161,7 @@ for i in range(20000):
         count = 0
         print('in -> ', in_stores)
         print('out -> ', out_stores)
+        # print(network.neural_matrix[len(network.neural_matrix) - 1])
+        # print(network.weight_matrix[len(network.neural_matrix) - 2])
         print()
         # sleep(0.05)
