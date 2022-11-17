@@ -8,7 +8,7 @@ from program_1.global_data import out_stores
 
 weight_matrix = network.weight_matrix # импортируем матрицу весов
 neural_matrix = network.neural_matrix # импортируем матрицу нейронов
-err_matrix = [] # проверить копируются значения или ссылки. Нужны значения
+err_matrix = deepcopy(neural_matrix) # проверить копируются значения или ссылки. Нужны значения
 
 learn_k = 0.01 # коофициент обучения
 
@@ -28,8 +28,8 @@ def learn_program ():
     for a in range(len(weight_matrix)):
         for b in range(len(weight_matrix[a])): 
             for c in range(len(weight_matrix[a][b])): 
-                if -0.01 > weight_matrix[a][b][c] < 0: weight_matrix[a][b][c] -= 0.001 # сдвиг от затухания
-                if 0 > weight_matrix[a][b][c] < 0.01: weight_matrix[a][b][c] += 0.001
+                if -0.01 > weight_matrix[a][b][c] < 0: weight_matrix[a][b][c] -= 0.0001 # сдвиг от затухания
+                if 0 > weight_matrix[a][b][c] < 0.01: weight_matrix[a][b][c] += 0.0001
                 weight_matrix[a][b][c] = weight_upd(weight_matrix[a][b][c], learn_k, err_matrix[a+1][c], neural_matrix[a][b], neural_matrix[a+1][c])
 
 

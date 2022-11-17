@@ -1,9 +1,15 @@
+from queue import Queue
+import threading
+from time import sleep
+from first_UI.UI_init import start_pyqt
 import program_2.factory_config as factory_config
 from program_2.factory_config import in_stores
 from program_2.factory_config import flow
 
 import neural_network.network as network
 import program_1.modul as modul
+
+calc_starting = True
 
 
 def store_filling(stores, fill_value, indication="+"):
@@ -22,20 +28,19 @@ def store_filling(stores, fill_value, indication="+"):
                     stores[item] = list(map(lambda x, y: x + y, stores[item], fill_value[item]))
 
 
-# запуск
-# инициализируем нейроны
-neural_config = network.neural_matrix_init.copy()  # схема перцептрона хранится в модуле нейросети
-neural_config.insert(0, len(in_stores))  # входными нейронами будут in_stores
-neural_config.append(len(factory_config.flow))  # выходными нейронами будут потоки
-network.neural_init(neural_config)  # передаём получившуюся схему в конструктор нейрсети
+def initialized():
+    # запуск
+    # инициализируем нейроны
+    neural_config = network.neural_matrix_init.copy()  # схема перцептрона хранится в модуле нейросети
+    neural_config.insert(0, len(in_stores))  # входными нейронами будут in_stores
+    neural_config.append(len(factory_config.flow))  # выходными нейронами будут потоки
+    network.neural_init(neural_config)  # передаём получившуюся схему в конструктор нейрсети
 
-print(in_stores)
+
 # рассчитываем сколько в какой поток направила ресурсов нейросеть
 
 # пропускаем запасы складов через функцию активации чтобы потом использовать как множитель потребления
 temp_in_stores = {}
-
-
 def resource_flow():
     excess = 0.1  # на сколько мы можем привышать потребление
     a = 20  # чем больше значение, тем больше будет накапливаться буфера в складах (будет стремиться к этому значению)
@@ -52,7 +57,7 @@ def resource_flow():
 # расчитываем сколько ресурса пришло в поток
 def flow_calc():
     out_neural_data = network.neural_matrix[len(network.neural_matrix) - 1]
-    print (out_neural_data)
+    # print (out_neural_data)
     sum_out_neural = sum(out_neural_data)
     for item in factory_config.flow_map:
         for i in factory_config.flow_map[item]:
@@ -74,3 +79,27 @@ def cycle_run():
         # рассчитываем сколько в какой поток направила ресурсов нейросеть 
         resource_flow()
         flow_calc()
+
+# запускаем потоки
+def thread_runner():
+    initialized()
+
+    q = Queue()
+    print("инициализация UI")
+    q.put("инициализация UI")
+    thr_2 = threading.Thread(target=start_pyqt, args=("pyqt", q))
+    thr_2.start()
+    q.join()
+    print("UI загружен")
+    print(network.neural_matrix)
+
+    while thr_2.is_alive():
+        if calc_starting:
+            thr_1 = threading.Thread(target=cycle_run)
+            thr_1.start()
+            sleep(2)
+            print(network.neural_matrix)
+            thr_1.join()           
+
+if __name__ == '__main__':
+    thread_runner()

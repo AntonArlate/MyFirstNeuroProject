@@ -45,6 +45,9 @@ def neural_init(neural_config):
 
     neural_matrix.extend ( [[1] * neural_config[i] for i in range(n)])
 
+    # print ("Neural -->> ", neural_matrix)
+    # print()
+
     weight_init(neural_config)
 
     # neural_matrix_init.pop(0)
@@ -65,6 +68,8 @@ def weight_init(neural_config):
                 next_lay.append(random ()) # random () /\ next_lay_n
             current_lay.append(next_lay)
         weight_matrix.append(current_lay)
+        # print ("Weight L",l,"->L",l+1, "==>> ", weight_matrix[l])
+    
         # print (weight_matrix, ' W_matrix')
 
     # neural_matrix_init.pop(0)

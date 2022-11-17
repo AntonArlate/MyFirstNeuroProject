@@ -1,7 +1,10 @@
+from time import sleep
+from datetime import datetime
+start_time = datetime.now()
+
 from copy import deepcopy
 from functools import reduce
 from operator import add
-from time import sleep
 import neural_network.network as network
 import program_1.modul as modul
 
@@ -165,3 +168,5 @@ for i in range(200000):
         # print(network.weight_matrix[len(network.neural_matrix) - 2])
         print()
         # sleep(0.05)
+
+print(datetime.now() - start_time)

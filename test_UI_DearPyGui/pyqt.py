@@ -9,9 +9,13 @@
 
 
 
-from asyncio import sleep
 import sys
+import threading
+from time import sleep
 from PyQt5 import QtCore, QtGui, QtWidgets
+from program import data
+
+
 
 a = 53
 
@@ -57,22 +61,17 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.upd)
+        self.timer.start(100)
+
 
         self.result = 0
         self.add_functions()
 
 
-
-
-        # global a
-        # for i in range(1000):
-        #     a += 1
-        #     print (i)
-        #     self.upd(a)
-    
-
     def upd (self):
-        self.label.setText(str(a))
+        self.label.setText(str(data))
 
 
 
@@ -101,6 +100,23 @@ class Ui_MainWindow(object):
 
 
 
+def start_pyqt (thr_name, q):
+
+    
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+
+    ui = Ui_MainWindow()
+
+    ui.setupUi(MainWindow)
+
+    MainWindow.show()
+
+    sleep(3)
+    q.task_done()
+
+    print (str(data))
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':
@@ -110,11 +126,12 @@ if __name__ == '__main__':
     MainWindow = QtWidgets.QMainWindow()
 
     ui = Ui_MainWindow()
-    print (ui)
     ui.setupUi(MainWindow)
 
     MainWindow.show()
 
+
+  
 
 
     sys.exit(app.exec_())
