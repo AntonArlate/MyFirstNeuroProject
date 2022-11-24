@@ -1,6 +1,13 @@
-neural_matrix_init = [3, 4]
-bias_map = [True, True]
+from neural_network_v2 import network
 
-# print(list[map sum(x, y), neural_matrix_init, bias_map])
+matrix = network
+print (matrix)
 
-print(neural_matrix_init + [1]*False)
+# from neural_network_v2 import neuron
+# from test2 import vis
+
+# matrix = neuron.NeuronMatrix([3, 4, 5])
+
+# print (matrix.all_layers[0].neurons[0].value)
+# print()
+# vis (matrix)

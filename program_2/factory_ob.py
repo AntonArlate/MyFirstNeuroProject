@@ -1,6 +1,3 @@
-from urllib import request
-
-
 class factory:
     def __init__(self, name:str, f_request:dict, produce:dict):
         self.name = name # имя завода

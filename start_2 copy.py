@@ -61,7 +61,7 @@ def resource_flow():
 
 # расчитываем сколько ресурса пришло в поток
 def flow_calc():
-    out_neural_data = neuron_matrix.get_data(len(neuron_matrix.all_layers)-1)
+    out_neural_data = network.neural_matrix[len(network.neural_matrix) - 1]
     # print (out_neural_data)
     sum_out_neural = sum(out_neural_data)
     for item in factory_config.flow_map:
@@ -77,16 +77,13 @@ def cycle_run():
         store_filling(in_stores, factory_config.mine)  # наполняем склады
 
         neuron_matrix.data_upd (modul.in_data_to_neur(modul.item_to_neur(in_stores)), 0) # записываем во входные нейроны значения скалодов пропущеные через нормализатор
-        for j in range(len(neuron_matrix.all_layers) - 1):  # проходимся по сети функцией прямого распространения.
+        for j in range(len(network.neural_matrix) - 1):  # проходимся по сети функцией прямого распространения.
             # На выходе получаем значения потоков 0,0..1,0
-            neuron_matrix.forWards(j)
+            network.forWards(j)
 
         # рассчитываем сколько в какой поток направила ресурсов нейросеть 
         resource_flow()
         flow_calc()
-        # запрашиваем калькуляцию у заводов. Данные уже у них в листе "flow"
-        print()
-        print(flow)
 
 # запускаем потоки
 def thread_runner():
