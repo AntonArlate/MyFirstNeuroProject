@@ -102,7 +102,11 @@ def thread_runner():
             thr_1 = threading.Thread(target=cycle_run)
             thr_1.start()
             sleep(2)
-            thr_1.join()           
+            thr_1.join()      
+
+def not_thread_runner():    
+    initialized() 
+    cycle_run()
 
 if __name__ == '__main__':
     thread_runner()

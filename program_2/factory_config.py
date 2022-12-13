@@ -2,9 +2,11 @@ import program_2.factory_ob as factory_ob
 
 in_stores = {}
 out_stores = {}
+err_out_stor = {}
 flow = []
 flow_map = {}
-all_factoty_list = []
+flow_map2 = [] # индекс имени ресурса = индексу потока
+all_factoty_list : list[factory_ob.factory] = []
 err_factory = []
 
 
@@ -62,11 +64,12 @@ def out_store_generator ():
 def flow_generator ():
     count = 0
     for fac in all_factoty_list:
-        for item in fac.request: 
-            flow.append(0)   
-            fac.i_flow = fac.i_flow + (count,)
-            if item not in flow_map: flow_map[item] = []
-            flow_map[item] = flow_map[item] + [count]
+        for item in fac.request: # перебираем попорядку все запросы всех заводов
+            flow.append(0) # создаём новый поток
+            fac.i_flow = fac.i_flow + (count,) # записываем индекс потока в кортеж индексов
+            if item not in flow_map: flow_map[item] = [] # создаём итем в карте потоков если требуется
+            flow_map[item] = flow_map[item] + [count] # прикрепляем к итему индекс его потока
+            flow_map2.append(item)
             count += 1
 
 
@@ -78,7 +81,13 @@ in_store_generator()
 out_store_generator ()
 flow_generator ()
 
+
+flow_change = flow.copy()
+err_flow = flow.copy()
+temp_flow = flow.copy()
+
 if __name__ == '__main__':
 
     print(flow)
     print(flow_map)
+

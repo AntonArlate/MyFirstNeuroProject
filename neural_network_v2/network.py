@@ -39,9 +39,9 @@ class link_neuron:
 class NeuronMatrix:
     def __init__(self, neural_matrix_init:list):    
 
-        self.all_layers: neuron_layer = [] 
-        self.all_neurons: neuron = []
-        self.all_links: link_neuron = []
+        self.all_layers: list[neuron_layer] = [] 
+        self.all_neurons: list[list[neuron]] = []
+        self.all_links: list[list[link_neuron]] = []
 
         for layer, neuron_total in enumerate(neural_matrix_init):
             neuron_total += bias_map[layer]
@@ -65,27 +65,32 @@ class NeuronMatrix:
                             self.all_links[l].append(link)
 
 
+
     def get_data (self, cur_lay, err = False):
         '''извлекает последовательные значения нейронов в слое (смещение не фильтруется)'''
-        cur_lay : neuron = self.all_neurons[cur_lay]
-        return list(map(lambda val: val.value, cur_lay))
+        if err:
+            cur_lay : list[neuron] = self.all_neurons[cur_lay]
+            return list(map(lambda val: val.error_value, cur_lay))
+        else:
+            cur_lay : list[neuron] = self.all_neurons[cur_lay]
+            return list(map(lambda val: val.value, cur_lay))
 
 
     def data_upd (self, in_data, cur_lay, err = False):
         '''Запись данных на указанный слой нейронов \nerr - да/нет на слой ошибок'''
-        cur_lay : neuron = [x for x in self.all_neurons[cur_lay] if not x.its_bias]
+        cur_lay : list[neuron] = [x for x in self.all_neurons[cur_lay] if not x.its_bias]
 
         for neu, data in zip(cur_lay, in_data):
             if neu.its_bias: continue
             if err:
-                neu.err_value = data
+                neu.error_value = data
             else:
                 neu.value = data
 
       
     def forWards (self, cur_lay): 
         '''Прямое распространение. Вводим номер обрабатываемого слоя. Будет расчитан следующий'''
-        neuron_out : neuron = self.all_layers[cur_lay+1].neurons
+        neuron_out : list[neuron] = self.all_layers[cur_lay+1].neurons
         for out_n in neuron_out:
             if out_n.its_bias: continue
             out_n.value = 0
@@ -99,7 +104,7 @@ class NeuronMatrix:
         '''обрвтное распространение. Вводим номер обрабатываемого слоя. Будет расчитан предыдущий.
          \nerr - записывать на слой ошибок. По умолчанияю True. Иначе на основной слой'''
 
-        neuron_out : neuron = self.all_layers[cur_lay-1].neurons
+        neuron_out : list[neuron] = self.all_layers[cur_lay-1].neurons
 
         for out_n in neuron_out:
             if err:
